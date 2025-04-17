@@ -1,10 +1,10 @@
-import textwrap
+import streamlit as st
 
 def analyze_cv_text(text):
     pros = []
     cons = []
 
-    # --- PROS ---
+    # PROS
     if "Python" in text or "Java" in text:
         pros.append("Strong programming skills.")
     if "SQL" in text or "MySQL" in text:
@@ -12,15 +12,15 @@ def analyze_cv_text(text):
     if "HTML" in text or "CSS" in text:
         pros.append("Web development skills.")
     if "Git" in text:
-        pros.append("Familiar with version control (Git).")
+        pros.append("Familiar with version control.")
     if "project" in text.lower():
         pros.append("Hands-on project experience.")
     if "problem-solving" in text.lower():
         pros.append("Good problem-solving ability.")
     if any(skill in text.lower() for skill in ["team", "collaboration", "communication"]):
-        pros.append("Strong soft skills (teamwork, communication).")
+        pros.append("Strong soft skills.")
 
-    # --- CONS ---
+    # CONS
     if "JavaScript" not in text:
         cons.append("No mention of JavaScript.")
     if "React" not in text and "frontend framework" not in text:
@@ -34,28 +34,33 @@ def analyze_cv_text(text):
 
     return pros, cons
 
-def display_pros_and_cons(pros, cons):
-    print("\n" + "="*50)
-    print("PROS:")
-    print("="*50)
-    if pros:
-        for p in pros:
-            print(f"✅ {p}")
-    else:
-        print("⚠️ No strong points detected.")
-    
-    print("\n" + "="*50)
-    print("CONS:")
-    print("="*50)
-    if cons:
-        for c in cons:
-            print(f"❌ {c}")
-    else:
-        print("🎉 No major weaknesses found!")
+st.set_page_config(page_title="Resume Pros & Cons Analyzer", layout="centered")
 
-# Input resume text
-resume_text = input("Paste resume-like text below:\n\n")
+st.title("📄 Resume Pros & Cons Analyzer")
+st.markdown("Paste **resume-like text** below to see an instant analysis.")
 
-# Analyze and show results
-pros_list, cons_list = analyze_cv_text(resume_text)
-display_pros_and_cons(pros_list, cons_list)
+resume_text = st.text_area("Paste resume-like text below:", height=250)
+
+if st.button("Analyze"):
+    if resume_text.strip():
+        pros, cons = analyze_cv_text(resume_text)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("✅ Pros")
+            if pros:
+                for item in pros:
+                    st.markdown(f"- {item}")
+            else:
+                st.info("No strong points detected.")
+
+        with col2:
+            st.subheader("❌ Cons")
+            if cons:
+                for item in cons:
+                    st.markdown(f"- {item}")
+            else:
+                st.success("No major weaknesses found!")
+    else:
+        st.warning("Please enter some resume text.")
